@@ -1,160 +1,70 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-import { Formik } from 'formik';
-import * as yup from 'yup';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import useLogin from '@/hooks/useLogin';
-import logo from "@/assets/images/splash-icon.png"
-
-const loginValidationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email('Please enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(6, ({ min }) => `Password must be at least ${min} characters`)
-    .required('Password is required'),
-});
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions, PixelRatio } from 'react-native';
+import PhoneInput from "react-native-international-phone-number";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { LinearGradient } from 'expo-linear-gradient';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const login = () => {
-  const {loading,login} = useLogin();
+  const [country, setCountry] = useState(null)
+  const [number, setNumber] = useState("")
+  
   return (
-    <View style={styles.container}>
-      <Image source={logo} style={styles.logo} />
-      <Text style={styles.title}>Login</Text>
-      <Formik
-        validationSchema={loginValidationSchema}
-        initialValues={{ email: '', password: '' }}
-        onSubmit={login}
+    <View className='h-full p-5 justify-evenly'>
+      <Text style={{fontSize:hp("3%")}} className='font-extrabold'><Text className='text-gray-500 text-3xl'>|</Text>  User Login</Text>
+      <Text style={{ fontSize: hp("2%"),marginTop:hp("2%") }} className='font-semibold'>Login with your registered mobile number</Text>
+      <PhoneInput
+        value={number}
+        onChangePhoneNumber={(number)=>{setNumber(number)}}
+        selectedCountry={country}
+        onChangeSelectedCountry={(country)=>{setCountry(country)}}
+      />
+      <Text style={{ fontSize: hp("2%") }} className='font-semibold'>Verify using</Text>
+      <View className='h-[9%] bg-gray-300 p-2 flex-row'>
+        <TouchableOpacity className='flex-row items-center justify-center w-1/2 h-full bg-white'>
+          <FontAwesome name="whatsapp" size={30} color="green" />
+          <Text style={{ fontSize: hp("2.2%") }} className='font-extrabold ml-2 text-[#25D366]'>Whatsapp</Text>
+        </TouchableOpacity>
+        <TouchableOpacity className='flex-row justify-center items-center w-1/2 h-full'>
+          <Text style={{ fontSize: hp("2.2%") }}>SMS</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={{ fontSize: hp("2%") }} className='font-semibold'>Verification Link will be sent on WhatsApp number.</Text>
+      <Text style={{ fontSize: hp("2%") }} className='font-semibold'>Kindly check and confirm mobile number before proceeding for verification.</Text>
+      <LinearGradient
+        colors={['#8000FF', '#007BFF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          <>
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="email-outline" size={24} color="gray" />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-              />
-            </View>
-            {errors.email && touched.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="lock-outline" size={24} color="gray" />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
-            </View>
-            {errors.password && touched.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
-            <TouchableOpacity>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className={isValid ? "" : "opacity-50"}
-              style={styles.button}
-              disabled={!isValid}
-              onPress={()=>handleSubmit()}
-            >
-              <Text style={styles.buttonText}>{loading?"Logging in...":"Login"}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.signUp}>
-                Don't have an account? <Text style={styles.signUpLink}>Sign Up</Text>
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Formik>
+        <TouchableOpacity style={{paddingVertical:hp("2%")}}>
+          <Text style={{fontSize:hp("2.5%")}} className='font-extrabold text-center text-white'>Continue</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+      <View className='flex-row justify-between items-center'>
+        <View className='w-2/5 h-[1px] bg-gray-400' />
+        <Text style={{fontSize:hp("2%")}} className='font-semibold'>Or</Text>
+        <View className='w-2/5 h-[1px] bg-gray-400' />
+      </View>
+      <View className='flex-row justify-center'>
+        <View className='w-1/2 flex-row justify-around'>
+          <View style={{padding:hp("2%")}} className='bg-white shadow-md rounded-full'>
+            <FontAwesome name="google" size={30} color="black" />
+          </View>
+          <View style={{padding:hp("2%")}} className='bg-white shadow-md rounded-full'>
+            <FontAwesome name="apple" size={30} color="black" />
+          </View>
+        </View>
+      </View>
+      <Text style={{fontSize:hp("2%")}} className='font-semibold text-center'>Don't have an account ?</Text>
+      <TouchableOpacity style={{paddingVertical:hp("2%")}} className='border-2 border-sky-500 font-bold'>
+        <Text style={{fontSize:hp("2.5%")}} className='font-extrabold text-sky-500 text-center'>Sign Up</Text>
+      </TouchableOpacity>
+      <View className='flex-row justify-center items-center'>
+        <Text style={{paddingBottom:hp("1%"),fontSize:hp("2%"),marginRight:wp("1%"),borderBottomWidth:2}} className='text-center font-semibold'>Continue as Guest</Text>
+        <FontAwesome name="chevron-right" size={15} color="black" />
+      </View>
     </View>
   )
 }
 
 export default login
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-  },
-  logo: {
-    height: 100,
-    width: 100,
-    resizeMode: 'contain',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 32,
-    marginBottom: 40,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    height: 50,
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    height: '100%',
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 20,
-    color: '#000',
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#1E90FF',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  signUp: {
-    color: '#000',
-  },
-  signUpLink: {
-    color: '#1E90FF',
-  },
-  errorText: {
-    color: 'red',
-    alignSelf: 'flex-start',
-    marginBottom: 10,
-  },
-});
